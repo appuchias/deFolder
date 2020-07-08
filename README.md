@@ -15,3 +15,7 @@ To set this repo up, you'll need to open the terminal and type:
  5. From the terminal, run the `main.py` file: `python main.py`
  6. When it finishes, it will show "Program finished!"
 
+# License
+This project is licensed under the [MIT license](https://github.com/appuchias/deFolder/blob/master/LICENSE).
+
+Coded with 🖤 by Appu
