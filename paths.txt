@@ -1,0 +1,2 @@
+<replace this with the path of the folder to operate on>
+<replace this with the destination folder>
