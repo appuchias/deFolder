@@ -19,7 +19,7 @@ def is_there_a_folder(src_path: str) -> bool:
 
 
 # Removes folders recurrsively moving files upwards in the directory tree. Returns False if no folders were deleted
-def remode_child_folders(src_path: Path, is_verbose: bool) -> bool:
+def remove_child_folders(src_path: Path, is_verbose: bool) -> bool:
     assert path.exists(src_path), "Provided path does not exist."
     result = True
 
@@ -89,7 +89,7 @@ if __name__ == "__main__":
 
     src_folder = Path(path.abspath(args.src_folder))
 
-    were_folders_deleted = remode_child_folders(src_folder, args.verbose)
+    were_folders_deleted = remove_child_folders(src_folder, args.verbose)
 
     print(
         "Done", "Folders were deleted" if were_folders_deleted else ""
