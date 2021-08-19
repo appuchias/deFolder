@@ -23,6 +23,10 @@ def remode_child_folders(src_path: Path, is_verbose: bool) -> bool:
     assert path.exists(src_path), "Provided path does not exist."
     result = True
 
+    # Print info
+    if is_verbose:
+        print("Running deFolder in", src_path)
+
     # While added to repeat the loop in consecutive folders
     while is_there_a_folder(src_path):
 
@@ -74,6 +78,12 @@ if __name__ == "__main__":
         help="Print all changes made",
         action="store_true",
     )
+    parser.add_argument(
+        "-s",
+        "--silent",
+        help="Do not print anything",
+        action="store_true",
+    )
 
     args = parser.parse_args()
 
@@ -83,4 +93,4 @@ if __name__ == "__main__":
 
     print(
         "Done", "Folders were deleted" if were_folders_deleted else ""
-    ) if args.verbose else ""
+    ) if not args.silent else ""
