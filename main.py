@@ -69,7 +69,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "src_folder",
         help="Folder to sort through",
-        metavar="source folder",
+        metavar="<source_folder>",
         type=Path,
     )
     parser.add_argument(
