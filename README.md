@@ -8,11 +8,11 @@
 
 This will move all files in subfolders to their root folder. Using `os.walk` it will cycle every child folder recursively and if files are found, move them to the parent folder, prepending the folder name to the file name.
 
+The silent and verbose options allow you to choose whether to know what changes have happened or not. Silent will remove all output and verbose will show all changes.
+
 ## Setup
 
-Fist of all, you need some path to 'deFolder' so this can take effect. At least one subfolder is needed and every action the script does can be easily changed to your needs.
-
-To set this repo up, you'll need to open the terminal and type:
+To set up this repo, you'll need to open the terminal and type:
 
  1. Navigate to the path where you want the repo: `cd <path>`
  1. Clone the repo: `git clone https://github.com/appuchias/deFolder.git`
