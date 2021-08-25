@@ -72,16 +72,30 @@ if __name__ == "__main__":
         metavar="<source_folder>",
         type=Path,
     )
-    parser.add_argument(
+
+    verbosity = parser.add_mutually_exclusive_group()
+    verbosity.add_argument(
         "-v",
         "--verbose",
         help="Print all changes made",
         action="store_true",
     )
-    parser.add_argument(
+    verbosity.add_argument(
         "-s",
         "--silent",
         help="Do not print anything",
+        action="store_true",
+    )
+
+    folder_name_separating = parser.add_mutually_exclusive_group()
+    folder_name_separating.add_argument(
+        "--separator",
+        help="Custom folder name to file separator (FOLDER_NAME{separator}FILE_NAME.EXTENSION)",
+        type=str,
+    )
+    folder_name_separating.add_argument(
+        "--no-folder-name",
+        help="Do not pprepend the folder name to moved files [Potential conflicting file names overwriting!] (FILE_NAME.EXTENSION)",
         action="store_true",
     )
 
