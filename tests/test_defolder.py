@@ -17,7 +17,7 @@ def test_defolder():
     shutil.copytree(r".\tests\template", path)
 
     # Run the file and get the result
-    os.system("py main.py -s " + path)
+    os.system("py main.py -q " + path)
     files = list([e.name for e in os.scandir(path)])
 
     # Remove trail
@@ -43,7 +43,7 @@ def test_defolder_no_folder_name():
     shutil.copytree(r".\tests\template", path)
 
     # Run the file and get the result
-    os.system("py main.py --no-folder-name -s " + path)
+    os.system("py main.py --no-folder-name -q " + path)
     files = list([e.name for e in os.scandir(path)])
 
     # Remove trail
@@ -69,7 +69,7 @@ def test_defolder_different_separator():
     shutil.copytree(r".\tests\template", path)
 
     # Run the file and get the result
-    os.system("py main.py --separator _ -s " + path)
+    os.system("py main.py -s _ -q " + path)
     files = list([e.name for e in os.scandir(path)])
 
     # Remove trail

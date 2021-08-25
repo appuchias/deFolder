@@ -92,14 +92,15 @@ if __name__ == "__main__":
         action="store_true",
     )
     verbosity.add_argument(
-        "-s",
-        "--silent",
+        "-q",
+        "--quiet",
         help="Do not print anything",
         action="store_true",
     )
 
     folder_name_separating = parser.add_mutually_exclusive_group()
     folder_name_separating.add_argument(
+        "-s",
         "--separator",
         help="Custom folder name to file separator (FOLDER_NAME{separator}FILE_NAME.EXTENSION)",
         type=str,
