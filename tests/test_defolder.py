@@ -76,3 +76,21 @@ def test_defolder_different_separator():
     shutil.rmtree(path)
 
     assert files == result_files
+
+
+# Should jump out of the try block
+def test_verbosity_group():
+    try:
+        os.system("py main.py -q -v")
+        assert False
+    except:
+        assert True
+
+
+# Should raise an exception
+def test_folder_name_group():
+    try:
+        os.system("py main.py --no-folder-name -s _")
+        assert False
+    except:
+        assert True
