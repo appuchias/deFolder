@@ -19,7 +19,10 @@ def is_there_a_folder(src_path: str) -> bool:
 
 
 # Removes folders recurrsively moving files upwards in the directory tree. Returns False if no folders were deleted
-def remove_child_folders(src_path: Path, is_verbose: bool) -> bool:
+def remove_child_folders(
+    src_path: Path, is_verbose: bool, separator: str, folder_name: bool = True
+) -> bool:
+
     assert path.exists(src_path), "Provided path does not exist."
     result = False
 
@@ -43,7 +46,15 @@ def remove_child_folders(src_path: Path, is_verbose: bool) -> bool:
                     # Move the file itself
                     os.rename(
                         file_path,
-                        path.join(src_path, str(file_path.parent) + "-" + element),
+                        path.join(
+                            src_path,
+                            (
+                                (str(file_path.parent) + str(separator))
+                                if folder_name
+                                else ""
+                            )
+                            + element,
+                        ),
                     )
 
                     # UX
@@ -92,19 +103,27 @@ if __name__ == "__main__":
         "--separator",
         help="Custom folder name to file separator (FOLDER_NAME{separator}FILE_NAME.EXTENSION)",
         type=str,
+        nargs="?",
+        default="-",
     )
     folder_name_separating.add_argument(
         "--no-folder-name",
         help="Do not pprepend the folder name to moved files [Potential conflicting file names overwriting!] (FILE_NAME.EXTENSION)",
-        action="store_true",
+        action="store_false",
+        dest="folder_name",
     )
 
     args = parser.parse_args()
 
     src_folder = Path(path.abspath(args.src_folder))
 
-    were_folders_deleted = remove_child_folders(src_folder, args.verbose)
+    were_folders_deleted = remove_child_folders(
+        src_folder,
+        args.verbose,
+        args.separator,
+        folder_name=args.folder_name,
+    )
 
     print(
-        "Done", "Folders were deleted" if were_folders_deleted else ""
+        "Done", "\nFolders were deleted" if were_folders_deleted else ""
     ) if not args.silent else ""
