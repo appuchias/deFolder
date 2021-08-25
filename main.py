@@ -21,7 +21,7 @@ def is_there_a_folder(src_path: str) -> bool:
 # Removes folders recurrsively moving files upwards in the directory tree. Returns False if no folders were deleted
 def remove_child_folders(src_path: Path, is_verbose: bool) -> bool:
     assert path.exists(src_path), "Provided path does not exist."
-    result = True
+    result = False
 
     # Print info
     if is_verbose:
@@ -57,7 +57,7 @@ def remove_child_folders(src_path: Path, is_verbose: bool) -> bool:
         # 'If' to avoid removing root folder, remove every other child folder
         if Path(root) != src_path:
             if result:
-                result = False
+                result = True
             os.rmdir(root)
 
     return result
