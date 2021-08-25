@@ -102,14 +102,14 @@ if __name__ == "__main__":
     folder_name_separating.add_argument(
         "-s",
         "--separator",
-        help="Custom folder name to file separator (FOLDER_NAME{separator}FILE_NAME.EXTENSION)",
+        help="Custom folder name to file separator",
         type=str,
         nargs="?",
         default="-",
     )
     folder_name_separating.add_argument(
         "--no-folder-name",
-        help="Do not pprepend the folder name to moved files [Potential conflicting file names overwriting!] (FILE_NAME.EXTENSION)",
+        help="Do not prepend the folder name to moved files [Potential conflicting file names overwriting!]",
         action="store_false",
         dest="folder_name",
     )
