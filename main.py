@@ -20,7 +20,10 @@ def is_there_a_folder(src_path: str) -> bool:
 
 # Removes folders recurrsively moving files upwards in the directory tree. Returns False if no folders were deleted
 def remove_child_folders(
-    src_path: Path, is_verbose: bool, separator: str, folder_name: bool = True
+    src_path: Path,
+    is_verbose: bool = True,
+    separator: str = "-",
+    folder_name: bool = True,
 ) -> bool:
 
     assert path.exists(src_path), "Provided path does not exist."
@@ -104,7 +107,6 @@ if __name__ == "__main__":
         "--separator",
         help="Custom folder name to file separator",
         type=str,
-        nargs="?",
         default="-",
     )
     folder_name_separating.add_argument(
@@ -127,4 +129,4 @@ if __name__ == "__main__":
 
     print(
         "Done", "\nFolders were deleted" if were_folders_deleted else ""
-    ) if not args.silent else ""
+    ) if not args.quiet else ""
