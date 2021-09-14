@@ -144,5 +144,5 @@ if __name__ == "__main__":
     )
 
     print(
-        "Done", "\nFolders were deleted" if were_folders_deleted else "Failed"
+        "Finished.", "\nFolders were deleted" if were_folders_deleted else "\nFailed"
     ) if not args.quiet else ""
