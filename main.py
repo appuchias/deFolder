@@ -1,11 +1,11 @@
-import os, argparse
-from os import path, walk
+import os, argparse, stat
 from pathlib import Path
+from typing import get_args
 
 
 # Checks if there is a folder inside the specified path
 def is_there_a_folder(src_path: str) -> bool:
-    assert path.exists(src_path), "Provided path does not exist."
+    assert os.path.exists(src_path), "Provided path does not exist."
 
     # If there is a folder, break the loop and return True
     for element in os.scandir(src_path):
@@ -18,15 +18,17 @@ def is_there_a_folder(src_path: str) -> bool:
     return True
 
 
-# Removes folders recurrsively moving files upwards in the directory tree. Returns False if no folders were deleted
-def remove_child_folders(
+# Removes folders recursively moving files upwards in the directory tree. Returns False if no folders were deleted
+def defolder(
     src_path: Path,
     is_verbose: bool = True,
     separator: str = "-",
     folder_name: bool = True,
 ) -> bool:
 
-    assert path.exists(src_path), "Provided path does not exist."
+    src_path = Path(str(src_path).strip("/").strip("\\"))
+
+    assert os.path.exists(src_path), "Provided path does not exist."
     result = False
 
     # Print info
@@ -44,41 +46,50 @@ def remove_child_folders(
                 for element in files:
 
                     # Get the file path as a path object
-                    file_path = Path(path.join(root, element))
+                    file_path = Path(os.path.join(root, element))
 
                     # Move the file itself
+                    folder_and_separator = (
+                        (str(file_path.parent) + str(separator)) if folder_name else ""
+                    )
                     os.rename(
                         file_path,
-                        path.join(
+                        os.path.join(
                             src_path,
-                            (
-                                (str(file_path.parent) + str(separator))
-                                if folder_name
-                                else ""
-                            )
-                            + element,
+                            folder_and_separator + element,
                         ),
                     )
 
                     # UX
                     if is_verbose:
                         print(
+                            "mv:",
                             file_path,
                             "->",
-                            path.join(src_path, str(file_path.parent) + "-" + element),
+                            os.path.join(
+                                src_path, str(file_path.parent) + "-" + element
+                            ),
                         )
 
         # 'If' to avoid removing root folder, remove every other child folder
         if Path(root) != src_path:
             if result:
                 result = True
-            os.rmdir(root)
+            if is_verbose:  # Display removed folders
+                print("rm:", root)
+
+            try:
+                os.rmdir(root)
+            except PermissionError:
+                # Give permissions to file
+                os.chmod(root, stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO)
+                os.rmdir(root)
 
     return result
 
 
-# Default behaviour
-if __name__ == "__main__":
+# Get argparse args
+def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "src_folder",
@@ -116,11 +127,16 @@ if __name__ == "__main__":
         dest="folder_name",
     )
 
-    args = parser.parse_args()
+    return parser.parse_args()
 
-    src_folder = Path(path.abspath(args.src_folder))
 
-    were_folders_deleted = remove_child_folders(
+# Default behavior
+if __name__ == "__main__":
+    args = get_args()
+
+    src_folder = Path(os.path.abspath(args.src_folder))
+
+    were_folders_deleted = defolder(
         src_folder,
         args.verbose,
         args.separator,
@@ -128,5 +144,5 @@ if __name__ == "__main__":
     )
 
     print(
-        "Done", "\nFolders were deleted" if were_folders_deleted else ""
+        "Done", "\nFolders were deleted" if were_folders_deleted else "Failed"
     ) if not args.quiet else ""
