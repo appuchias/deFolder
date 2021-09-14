@@ -1,21 +1,12 @@
 import os, shutil, stat, errno
-import main
+import main, pytest
 
 # Empty test directory
 path = "C:\\Temporal\\sandbox\\test\\"
 
 
-def empty_test_directory():
-    try:
-        shutil.rmtree(path, ignore_errors=False, onerror=handleRemoveReadonly)
-    except PermissionError:
-        print(list(os.listdir(path)))
-        raise
-
-
 def handleRemoveReadonly(func, path, exc):
-    excvalue = exc[1]
-    if func in (os.rmdir, os.remove) and excvalue.errno == errno.EACCES:
+    if func in (os.rmdir, os.remove) and exc[1].errno == errno.EACCES:
         os.chmod(path, stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO)  # 0777
         func(path)
     else:
@@ -41,87 +32,60 @@ def check_dir_validity(
 
     # Remove trail
     if remove_trail:
-        empty_test_directory()
+        shutil.rmtree(path, ignore_errors=False, onerror=handleRemoveReadonly)
 
-    return src_list == comparelist
+    return sorted(src_list) == sorted(comparelist)
 
 
-# Test the defolder capabilities with custom files
-def test_defolder():
-    result_files = [
-        "file1",
-        "file2",
-        "file3",
-        "folder1-file11",
-        "folder1-folder11-file111",
-        "folder2-file21",
-        "folder3-file31",
-    ]
+# Test the defolder capabilities with custom files and all possibilities
+@pytest.mark.parametrize(
+    ("src_path", "is_verbose", "separator", "folder_name"),
+    (
+        (path, True, "-", True),
+        (path, True, "-", False),
+        (path, True, "_", True),
+        (path, False, "-", True),
+        (path, False, "-", False),
+        (path, False, "_", True),
+        (path, False, None, True),
+        (path, False, None, False),
+    ),
+)
+def test_defolder(src_path: str, is_verbose: bool, separator: str, folder_name: bool):
+    if folder_name:
+        result_files = [
+            "file1",
+            "file2",
+            "file3",
+            f"folder1{separator if separator else '-'}file11",
+            f"folder1{separator if separator else '-'}folder11{separator if separator else '-'}file111",
+            f"folder2{separator if separator else '-'}file21",
+            f"folder3{separator if separator else '-'}file31",
+        ]
+    else:
+        result_files = [
+            "file1",
+            "file2",
+            "file3",
+            f"file11",
+            f"file111",
+            f"file21",
+            f"file31",
+        ]
+
     # Create the test sandbox
     try:
-        shutil.copytree(".\\tests\\template", path)
+        shutil.copytree(".\\test", path)
         os.chmod(path, stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO)
     except FileExistsError:
-        empty_test_directory()
-        shutil.copytree(".\\tests\\template", path)
+        shutil.rmtree(path, ignore_errors=False, onerror=handleRemoveReadonly)
+        shutil.copytree(".\\test", path)
+
+    # Ensure all files were copied successfully
     assert check_dir_validity(path)
 
-    assert True
-
-    # Run the file and get the result
-    os.system("py main.py -q " + path)
-
-    assert check_dir_validity(path, result_files, remove_trail=True)
-
-
-# Same test changing the folder name to False
-def test_defolder_no_folder_name():
-    result_files = [
-        "file1",
-        "file11",
-        "file111",
-        "file2",
-        "file21",
-        "file3",
-        "file31",
-    ]
-
-    # Create the test sandbox
-    try:
-        shutil.copytree(".\\tests\\template", path)
-    except FileExistsError:
-        empty_test_directory()
-        shutil.copytree(".\\tests\\template", path)
-    assert check_dir_validity(path)
-
-    # Run the file and get the result
-    os.system("py main.py --no-folder-name -q " + path)
-
-    assert check_dir_validity(path, result_files, remove_trail=True)
-
-
-# Original test changing the separator
-def test_defolder_different_separator():
-    result_files = [
-        "file1",
-        "file2",
-        "file3",
-        "folder1_file11",
-        "folder1_folder11_file111",
-        "folder2_file21",
-        "folder3_file31",
-    ]
-
-    # Create the test sandbox
-    try:
-        shutil.copytree(".\\tests\\template", path)
-    except FileExistsError:
-        empty_test_directory()
-        shutil.copytree(".\\tests\\template", path)
-    assert check_dir_validity(path)
-
-    # Run the file and get the result
-    os.system("py main.py -s _ -q " + path)
+    # Run the file and check for in-function validation
+    main.defolder(src_path, is_verbose, separator, folder_name)
 
     assert check_dir_validity(path, result_files, remove_trail=True)
 
@@ -142,7 +106,3 @@ def test_folder_name_group():
         assert False
     except:
         assert True
-
-
-if __name__ == "__main__":
-    test_defolder()

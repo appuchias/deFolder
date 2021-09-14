@@ -24,12 +24,13 @@ def defolder(
     is_verbose: bool = True,
     separator: str = "-",
     folder_name: bool = True,
-) -> bool:
+):
+    if not separator:
+        separator = "-"
 
     src_path = Path(str(src_path).strip("/").strip("\\"))
 
     assert os.path.exists(src_path), "Provided path does not exist."
-    result = False
 
     # Print info
     if is_verbose:
@@ -73,8 +74,6 @@ def defolder(
 
         # 'If' to avoid removing root folder, remove every other child folder
         if Path(root) != src_path:
-            if result:
-                result = True
             if is_verbose:  # Display removed folders
                 print("rm:", root)
 
@@ -84,8 +83,6 @@ def defolder(
                 # Give permissions to file
                 os.chmod(root, stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO)
                 os.rmdir(root)
-
-    return result
 
 
 # Get argparse args
@@ -136,13 +133,11 @@ if __name__ == "__main__":
 
     src_folder = Path(os.path.abspath(args.src_folder))
 
-    were_folders_deleted = defolder(
+    defolder(
         src_folder,
         args.verbose,
         args.separator,
         folder_name=args.folder_name,
     )
 
-    print(
-        "Finished.", "\nFolders were deleted" if were_folders_deleted else "\nFailed"
-    ) if not args.quiet else ""
+    print("Finished.") if not args.quiet else ""
