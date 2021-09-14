@@ -7,15 +7,9 @@ from typing import get_args
 def is_there_a_folder(src_path: str) -> bool:
     assert os.path.exists(src_path), "Provided path does not exist."
 
-    # If there is a folder, break the loop and return True
-    for element in os.scandir(src_path):
-        if element.is_dir():
-            break
+    # If there is a folder, return True
+    return not all([file.is_file() for file in os.scandir(src_path)])
 
-    else:
-        return False
-
-    return True
 
 
 # Removes folders recursively moving files upwards in the directory tree. Returns False if no folders were deleted
@@ -45,9 +39,14 @@ def defolder(
             # Avoid moving files in the root folder
             if Path(root) != src_path:
                 for element in files:
-
                     # Get the file path as a path object
                     file_path = Path(os.path.join(root, element))
+
+                    # Create the string containing the folder and separator
+                    if folder_name:
+                        folder_and_separator = str(file_path.parent) + separator.strip()
+                    else:
+                        folder_and_separator = ""
 
                     # Move the file itself
                     folder_and_separator = (
@@ -67,9 +66,7 @@ def defolder(
                             "mv:",
                             file_path,
                             "->",
-                            os.path.join(
-                                src_path, str(file_path.parent) + "-" + element
-                            ),
+                            os.path.join(src_path, folder_and_separator + element),
                         )
 
         # 'If' to avoid removing root folder, remove every other child folder
