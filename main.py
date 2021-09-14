@@ -11,6 +11,12 @@ def is_there_a_folder(src_path: str) -> bool:
     return not all([file.is_file() for file in os.scandir(src_path)])
 
 
+# Check if text needs to be printed and print it in that case
+def output(text: str, is_verbose: bool):
+    """Output text to the console if condition is met (is_verbose in this case)"""
+    if is_verbose:
+        print(text)
+
 
 # Removes folders recursively moving files upwards in the directory tree. Returns False if no folders were deleted
 def defolder(
@@ -26,9 +32,7 @@ def defolder(
 
     assert os.path.exists(src_path), "Provided path does not exist."
 
-    # Print info
-    if is_verbose:
-        print("Running deFolder in", src_path)
+    output("Running deFolder in " + src_path, is_verbose)
 
     # While added to repeat the loop in consecutive folders
     while is_there_a_folder(src_path):
@@ -49,9 +53,6 @@ def defolder(
                         folder_and_separator = ""
 
                     # Move the file itself
-                    folder_and_separator = (
-                        (str(file_path.parent) + str(separator)) if folder_name else ""
-                    )
                     os.rename(
                         file_path,
                         os.path.join(
@@ -60,19 +61,17 @@ def defolder(
                         ),
                     )
 
-                    # UX
-                    if is_verbose:
-                        print(
-                            "mv:",
-                            file_path,
-                            "->",
-                            os.path.join(src_path, folder_and_separator + element),
-                        )
+                    output(
+                        "mv:"
+                        + file_path
+                        + "->"
+                        + os.path.join(src_path, folder_and_separator + element),
+                        is_verbose,
+                    )
 
         # 'If' to avoid removing root folder, remove every other child folder
         if Path(root) != src_path:
-            if is_verbose:  # Display removed folders
-                print("rm:", root)
+            output("rm: " + root, is_verbose)  # Display removed folders
 
             try:
                 os.rmdir(root)
