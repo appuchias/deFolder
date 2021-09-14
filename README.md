@@ -14,11 +14,11 @@ The silent and verbose options allow you to choose whether to know what changes 
 
 To set up this repo, you'll need to open the terminal and type:
 
- 1. Navigate to the path where you want the repo: `cd <path>`
- 1. Clone the repo: `git clone https://github.com/appuchias/deFolder.git`
- 1. Navigate inside the repo folder: `cd deFolder`
- 1. From the terminal, run the file: `python main.py [-h] [-v] [-s] <source_folder>`
- 1. For more information about usage, run `python main.py -h`
+1. Navigate to the path where you want the repo: `cd <path>`
+1. Clone the repo: `git clone https://github.com/appuchias/deFolder.git`
+1. Navigate inside the repo folder: `cd deFolder`
+1. From the terminal, run the file: `python main.py [-h] [-v | -q] [-s SEPARATOR | --no-folder-name] <source_folder>`
+1. For more information about usage, run `python main.py -h`
 
 ## License
 
