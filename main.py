@@ -32,7 +32,7 @@ def defolder(
 
     assert os.path.exists(src_path), "Provided path does not exist."
 
-    output("Running deFolder in " + src_path, is_verbose)
+    output("Running deFolder in " + str(src_path), is_verbose)
 
     # While added to repeat the loop in consecutive folders
     while is_there_a_folder(src_path):
@@ -63,7 +63,7 @@ def defolder(
 
                     output(
                         "mv:"
-                        + file_path
+                        + str(file_path)
                         + "->"
                         + os.path.join(src_path, folder_and_separator + element),
                         is_verbose,
